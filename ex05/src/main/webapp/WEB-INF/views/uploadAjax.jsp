@@ -5,6 +5,34 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<style type="text/css">
+	
+	.uploadResult{
+		
+		width: 100%;
+		background-color: gray;
+	
+	}
+	
+	.uploadResult ul{
+		display: flex;
+		flex-flow: row;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	.uploadResult ul li{
+	
+	list-style: none;
+	padding-left: 10px;
+	
+	}
+	
+	.uploadResult ul li img{
+		width: 20px;
+	}
+
+</style>
 </head>
 <body>
 
@@ -15,9 +43,17 @@
 		<input type='file' name='uploadFile' multiple>
 		
 	</div>
+	
 
 	<button id='uploadBtn'>Upload</button>
-
+	
+	<div class='uploadResult'>
+			<ul>
+			
+			</ul>
+		</div>
+		
+	
 	<script
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -51,6 +87,11 @@
 		
 	}
 	
+	var cloneObj = $(".uploadDiv").clone();
+	
+	
+	
+	
 			$("#uploadBtn").on("click", function(e){
 				
 				var formData = new FormData();
@@ -81,17 +122,52 @@
 					contentType: false,
 					//processData, contentType 반드시 false여야만 데이터 전송이 됨
 					data: formData,
-					type: 'POST',
-					success: function(result){
-						alert("Uploaded");
+						type: 'POST',
+						dataType: 'json',
+						success: function(result){
+						
+							console.log(result);
+							
+							showUploadedFile(result);
+							
+							$(".uploadDiv").html(cloneObj.html());
+							
+							
 					}
 				}); //end ajax
 				
 			});
+	
+			var uploadResult = $(".uploadResult ul");
 			
-		
-		
-		
+			function showUploadedFile(uploadResultArr){
+				
+				var str ="";
+				
+				$(uploadResultArr).each(function(i, obj){
+					
+					if(!obj.image){
+						
+						str +="<li><img src='/resources/img/attach.png'>"+ obj.fileName + "</li>";
+					} else{
+						
+						/* str +="<li>"+ obj.fileName + "</li>"; */
+						
+						var fileCallPath= encodeURIComponent(obj.uploadPath+"/s_"+obj.uuid+"_"+obj.fileName);
+						
+						str +="<li><img src='/display?fileName="+fileCallPath+"'><li>";
+						
+						
+					}
+						
+					
+				
+					
+				});
+				
+				uploadResult.append(str);
+				
+			}
 		
 		
 		
